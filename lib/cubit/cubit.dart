@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_api/cubit/states.dart';
 import 'package:flutter/material.dart';
+import 'package:news_api/network/local/cache_helper.dart';
 import 'package:news_api/screens/science.dart';
 import 'package:news_api/screens/sports.dart';
-
 import '../network/remote/dio_helper.dart';
 import '../screens/business.dart';
 class NewsCubit extends Cubit<NewsStates> {
@@ -44,10 +44,29 @@ class NewsCubit extends Cubit<NewsStates> {
 
 void getBusiness() {
     emit(NewsGetBusinessLoadingState());
+    if(business.isEmpty)
+      {
+        DioHelper.getData(
+            url: 'v2/top-headlines',
+            query: {
+              'country':'us',
+              'category':'business',
+              'apiKey':'3b0037d41f6b42b59e39608377207adb',
+            }
+        ).then((value) {
+          business = value!.data['articles'];
+          emit(NewsGetBusinessSuccessState());
+        }).catchError((error) {
+          print(error.toString());
+          emit(NewsGetBusinessErrorState(error.toString()));
+        });
+      }else{
+      emit(NewsGetBusinessSuccessState());
+    }
   }
 void getSports() {
     emit(NewsGetSportsLoadingState());
-    if (sports.length == 0) {
+    if (sports.isEmpty) {
       DioHelper.getData(
           url: 'v2/top-headlines',
           query: {
@@ -57,7 +76,6 @@ void getSports() {
           }
       ).then((value) {
         sports = value!.data['articles'];
-        print(sports.toString());
         emit(NewsGetSportsSuccessState());
       }).catchError((error) {
         print(error.toString());
@@ -69,7 +87,7 @@ void getSports() {
   }
 void getScience() {
     emit(NewsGetScienceLoadingState());
-    if (science.length == 0) {
+    if (science.isEmpty) {
       DioHelper.getData(
           url: 'v2/top-headlines',
           query: {
@@ -79,7 +97,6 @@ void getScience() {
           }
       ).then((value) {
         science = value!.data['articles'];
-        print(science.toString());
         emit(NewsGetScienceSuccessState());
       }).catchError((error) {
         print(error.toString());
@@ -89,4 +106,28 @@ void getScience() {
       emit(NewsGetScienceSuccessState());
     }
   }
+
+  bool isDark = false;
+  void changeAppMode({bool? fromShared}){
+    if(fromShared != null){
+      isDark = fromShared;
+      emit(ChangeAppThemeState());
+    }else{
+      isDark = !isDark;
+      CacheHelper.putData(key: 'isDark', value: isDark).then((value) {
+        emit(ChangeAppThemeState());
+      });
+    }
+  }
+
+  // void changeAppMode(){
+  //   if(Get.isDarkMode){
+  //     Get.changeTheme(Themes.lightMode);
+  //     CacheHelper.putData(key: 'isDark', value: false);
+  //   }else{
+  //     Get.changeTheme(Themes.darkMode);
+  //     CacheHelper.putData(key: 'isDark', value: true);
+  //   }
+  //   emit(ChangeAppThemeState());
+  // }
 }

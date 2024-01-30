@@ -9,14 +9,18 @@ class BusinessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) {
-        return NewsCubit()..getBusiness();
-      },
-      child: BlocConsumer<NewsCubit,NewsStates>(
+    return  BlocConsumer<NewsCubit,NewsStates>(
           builder: (context, state) {
             var cubit = NewsCubit.get(context);
-            return ListView.separated(
+            if(cubit.business.isEmpty) {
+              return ListView.builder(
+                  itemBuilder: (context, index) {
+                    return shimmerCard(context);
+                  },
+                  itemCount: 4,
+              );
+            }
+            return  ListView.separated(
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) => buildRowItem(context, cubit.business[index]),
               separatorBuilder: (context, index) => const Divider(
@@ -29,7 +33,6 @@ class BusinessScreen extends StatelessWidget {
           listener: (context, state) {
 
           },
-      ),
     );
   }
 

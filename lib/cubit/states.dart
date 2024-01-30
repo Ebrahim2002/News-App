@@ -22,3 +22,4 @@ class NewsGetScienceErrorState extends NewsStates {
   final String error;
   NewsGetScienceErrorState(this.error);
 }
+class ChangeAppThemeState extends NewsStates {}
