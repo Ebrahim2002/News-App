@@ -42,7 +42,7 @@ dependencies:
   get:
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
-
+  webview_flutter: ^4.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

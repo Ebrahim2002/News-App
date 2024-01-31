@@ -24,8 +24,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NewsCubit()..getBusiness()..getSports()..getScience()..changeAppMode(fromShared: isDark),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => NewsCubit()..getBusiness()..getSports()..getScience()..changeAppMode(fromShared: isDark)
+        ),
+      ],
       child: BlocConsumer<NewsCubit,NewsStates>(
           builder: (context, state) {
             return  GetMaterialApp(
