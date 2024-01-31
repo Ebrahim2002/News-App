@@ -29,6 +29,7 @@ class SearchScreen extends StatelessWidget {
                       controller: cubit.searchController,
                       onFieldSubmitted: (value) {
                         cubit.getSearch(value);
+                        // cubit.searchController.clear();
                       },
                       onChanged: (value) {
                         cubit.getSearch(value);
