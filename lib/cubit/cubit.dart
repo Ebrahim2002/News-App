@@ -10,9 +10,13 @@ class NewsCubit extends Cubit<NewsStates> {
   NewsCubit() : super(NewsInitialState());
 
   static NewsCubit get(context) => BlocProvider.of(context);
-
+  TextEditingController searchController=TextEditingController();
   int currentIndex = 0;
 
+  void dispose(){
+    searchController.dispose();
+    super.close();
+  }
   List<BottomNavigationBarItem> bottomItems = const [
     BottomNavigationBarItem(
       icon: Icon(Icons.business),
@@ -51,7 +55,7 @@ void getBusiness() {
             query: {
               'country':'us',
               'category':'business',
-              'apiKey':'3b0037d41f6b42b59e39608377207adb',
+              'apiKey':'e875c7083fd5491b9623d443c11c6fa9',
             }
         ).then((value) {
           business = value!.data['articles'];
@@ -72,7 +76,7 @@ void getSports() {
           query: {
             'country':'us',
             'category':'sports',
-            'apiKey':'3b0037d41f6b42b59e39608377207adb',
+            'apiKey':'e875c7083fd5491b9623d443c11c6fa9',
           }
       ).then((value) {
         sports = value!.data['articles'];
@@ -93,7 +97,7 @@ void getScience() {
           query: {
             'country':'us',
             'category':'science',
-            'apiKey':'3b0037d41f6b42b59e39608377207adb',
+            'apiKey':'e875c7083fd5491b9623d443c11c6fa9',
           }
       ).then((value) {
         science = value!.data['articles'];
@@ -104,6 +108,29 @@ void getScience() {
       });
     } else {
       emit(NewsGetScienceSuccessState());
+    }
+  }
+  List<dynamic> search = [];
+  void getSearch(String value)
+  {
+    emit(NewsGetSearchLoadingState());
+    if(search.isEmpty){
+      DioHelper.getData(
+          url: 'v2/everything',
+          query: {
+            'q':value,
+            'apiKey':'e875c7083fd5491b9623d443c11c6fa9',
+          }
+      ).then((value) {
+        search = value!.data['articles'];
+        emit(NewsGetSearchSuccessState());
+      }).catchError((error) {
+        print(error.toString());
+        emit(NewsGetSearchErrorState(error.toString()));
+      });
+    }
+    else{
+      emit(NewsGetSearchSuccessState());
     }
   }
 

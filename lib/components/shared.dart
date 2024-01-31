@@ -1,54 +1,61 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:news_api/screens/webView/web_view.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget buildRowItem(BuildContext context, articles) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CachedNetworkImage(
-            width: MediaQuery.of(context).size.width * 0.26,
-            height: MediaQuery.of(context).size.height * 0.16,
-            imageBuilder: (context, imageProvider) => Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
+  return InkWell(
+    onTap: () {
+      Get.to(()=>WebScreenView(articles["url"])); //url
+    },
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CachedNetworkImage(
+              width: MediaQuery.of(context).size.width * 0.26,
+              height: MediaQuery.of(context).size.height * 0.16,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            imageUrl: '${articles['urlToImage']}',
-            placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-            errorWidget: (context, url, error) => const Center(child: Icon(Icons.error,color: Colors.grey,)),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${articles['title']}', //title
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-               Text(
-                '${articles['publishedAt']}',
-                style: const TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
-            ],
+              imageUrl: '${articles['urlToImage']}',
+              placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+              errorWidget: (context, url, error) => const Center(child: Icon(Icons.error,color: Colors.grey,)),
           ),
-        ),
-      ],
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${articles['title']}', //title
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                 Text(
+                  '${articles['publishedAt']}',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
